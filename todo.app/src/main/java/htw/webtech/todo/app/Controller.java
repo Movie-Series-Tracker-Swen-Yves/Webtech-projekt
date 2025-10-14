@@ -9,13 +9,15 @@ package htw.webtech.todo.app;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class Controller {
-    public Controller() {
-    }
-
-    @GetMapping({"/SwenIsKing"})
-    public String home() {
-        return "<html><body>\n  <h1>Test </h1>\n  <p>Baka! Sharingan Rasengang ITADAKIMASU. Tasgete Onichan Baka yaro</p>\n</body></html>\n";
+    @GetMapping("/progress")
+    public List<Progress> getAllProgress() {
+        return List.of(
+                new Progress("Breaking Bad", "Serie", 2, 5),
+                new Progress("Inception", "Film", 0, 0)
+        );
     }
 }
