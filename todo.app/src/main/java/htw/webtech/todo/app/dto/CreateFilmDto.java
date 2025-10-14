@@ -1,4 +1,3 @@
 package htw.webtech.todo.app.dto;
 
-public class CreateFilmDto {
-}
+public record CreateFilmDto(String title, Integer minute, String notes) { }

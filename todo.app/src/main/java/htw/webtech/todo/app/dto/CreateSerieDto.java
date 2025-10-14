@@ -1,4 +1,3 @@
 package htw.webtech.todo.app.dto;
 
-public class CreateSerieDto {
-}
+public record CreateSerieDto(String title, Integer season, Integer episode, Integer minute, String notes) { }
