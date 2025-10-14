@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Details</title></head>
+<body>
+<div id="out">Lade...</div>
+<script>
+    const title=new URLSearchParams(location.search).get('title');
+    (async ()=>{
+      const data = await fetch(`/api/movieinfo?title=${encodeURIComponent(title)}`).then(r=>r.json());
+      document.getElementById('out').innerHTML = `
+        <h2>${data.Title||title}</h2>
+        <p><strong>Bewertung:</strong> ${data.imdbRating??'–'}</p>
+        <p><strong>Beschreibung:</strong> ${data.Plot??'–'}</p>
+        ${data.Poster? `<img src="${data.Poster}" alt="Poster" style="max-width:300px">` : ''}
+        <p><a href="/">← zurück</a></p>
+      `;
+    })();
+</script>
+</body>
+</html>

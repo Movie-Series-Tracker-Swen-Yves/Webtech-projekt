@@ -9,11 +9,18 @@ import org.springframework.web.bind.annotation.*;
 public class MovieApiController {
 
     private final MovieApiService service;
-    public MovieApiController(MovieApiService service) { this.service = service; }
 
-    // Beispiel: /api/movieinfo?title=Inception
+    public MovieApiController(MovieApiService service) {
+        this.service = service;
+    }
+
     @GetMapping
     public ResponseEntity<String> byTitle(@RequestParam String title) {
-        return ResponseEntity.ok(service.fetchByTitle(title));
+        try {
+            return ResponseEntity.ok(service.fetchByTitle(title));
+        } catch (MovieApiService.MissingApiKeyException ex) {
+            return ResponseEntity.status(500).body("""
+        {"Response":"False","Error":"Server misconfigured: OMDb API key missing"}""");
+        }
     }
 }
