@@ -1,44 +1,61 @@
 package htw.webtech.todo.app.service;
 
-import htw.webtech.todo.app.model.Serie;
 import htw.webtech.todo.app.dto.CreateSerieDto;
+import htw.webtech.todo.app.model.Serie;
+import htw.webtech.todo.app.repository.SerieRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
 
 @Service
 public class SerieService {
-    private final Map<Long, Serie> store = new LinkedHashMap<>();
-    private final AtomicLong seq = new AtomicLong(1);
+    private final SerieRepository repo;
 
-    public SerieService() {
-        // Demo-Daten
-        create(new CreateSerieDto("Breaking Bad", 2, 5, 0, "letzte Folge offen"));
-        create(new CreateSerieDto("Attack on Titan", 4, 23, 10, "Finale schauen"));
+    public SerieService(SerieRepository repo) {
+        this.repo = repo;
     }
 
-    public List<Serie> findAll() { return new ArrayList<>(store.values()); }
+    public List<Serie> findAll() {
+        return repo.findAll();
+    }
 
-    public Optional<Serie> findById(Long id) { return Optional.ofNullable(store.get(id)); }
+    public Serie findById(Long id) {
+        return repo.findById(id).orElseThrow();
+    }
 
+    @Transactional
     public Serie create(CreateSerieDto dto) {
-        Long id = seq.getAndIncrement();
-        Serie s = new Serie(id, dto.title(), dto.season(), dto.episode(), dto.minute(), dto.notes());
-        store.put(id, s);
-        return s;
+        var s = new Serie();
+        s.setTitle(dto.getTitle());
+        s.setSeason(dto.getSeason());
+        s.setEpisode(dto.getEpisode());
+        s.setMinutes(dto.getMinutes());
+        s.setNotes(dto.getNotes());
+        return repo.save(s);
     }
 
-    public Optional<Serie> updatePartial(Long id, Integer season, Integer episode, Integer minute, String notes, String title) {
-        Serie s = store.get(id);
-        if (s == null) return Optional.empty();
-        if (season  != null) s.setSeason(season);
+    @Transactional
+    public void updatePartial(Long id, Integer season, Integer episode,
+                              Integer minute, String notes, String title) {
+        var s = findById(id);
+        if (season != null)  s.setSeason(season);
         if (episode != null) s.setEpisode(episode);
-        if (minute  != null) s.setMinute(minute);
-        if (notes   != null) s.setNotes(notes);
-        if (title   != null) s.setTitle(title);
-        return Optional.of(s);
+        if (minute != null)  s.setMinutes(minute);
+        if (notes != null)   s.setNotes(notes);
+        if (title != null)   s.setTitle(title);
+        repo.save(s);
     }
 
-    public boolean delete(Long id) { return store.remove(id) != null; }
+    @Transactional
+    public void setImdbId(Long id, String imdbId) {
+        var s = findById(id);
+        s.setImdbId(imdbId);
+        repo.save(s);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
 }

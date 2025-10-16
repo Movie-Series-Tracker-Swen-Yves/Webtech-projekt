@@ -1,42 +1,56 @@
 package htw.webtech.todo.app.service;
 
-import htw.webtech.todo.app.model.Film;
 import htw.webtech.todo.app.dto.CreateFilmDto;
+import htw.webtech.todo.app.model.Film;
+import htw.webtech.todo.app.repository.FilmRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
 
 @Service
 public class FilmService {
-    private final Map<Long, Film> store = new LinkedHashMap<>();
-    private final AtomicLong seq = new AtomicLong(1);
+    private final FilmRepository repo;
 
-    public FilmService() {
-        // Demo-Daten
-        create(new CreateFilmDto("Inception", 45, "Spannend bis zur Hälfte"));
-        create(new CreateFilmDto("Interstellar", 0, "Noch nicht angefangen"));
+    public FilmService(FilmRepository repo) {
+        this.repo = repo;
     }
 
-    public List<Film> findAll() { return new ArrayList<>(store.values()); }
+    public List<Film> findAll() {
+        return repo.findAll();
+    }
 
-    public Optional<Film> findById(Long id) { return Optional.ofNullable(store.get(id)); }
+    public Film findById(Long id) {
+        return repo.findById(id).orElseThrow();
+    }
 
+    @Transactional
     public Film create(CreateFilmDto dto) {
-        Long id = seq.getAndIncrement();
-        Film f = new Film(id, dto.title(), dto.minute(), dto.notes());
-        store.put(id, f);
-        return f;
+        var f = new Film();
+        f.setTitle(dto.getTitle());
+        f.setMinutes(dto.getMinutes());
+        f.setNotes(dto.getNotes());
+        return repo.save(f);
     }
 
-    public Optional<Film> updatePartial(Long id, Integer minute, String notes, String title) {
-        Film f = store.get(id);
-        if (f == null) return Optional.empty();
-        if (minute != null) f.setMinute(minute);
+    @Transactional
+    public void updatePartial(Long id, Integer minute, String notes, String title) {
+        var f = findById(id);
+        if (minute != null) f.setMinutes(minute);
         if (notes != null)  f.setNotes(notes);
         if (title != null)  f.setTitle(title);
-        return Optional.of(f);
+        repo.save(f);
     }
 
-    public boolean delete(Long id) { return store.remove(id) != null; }
+    @Transactional
+    public void setImdbId(Long id, String imdbId) {
+        var f = findById(id);
+        f.setImdbId(imdbId);
+        repo.save(f);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
 }

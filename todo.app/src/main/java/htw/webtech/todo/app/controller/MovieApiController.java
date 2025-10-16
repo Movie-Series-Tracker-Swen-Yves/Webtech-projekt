@@ -5,22 +5,38 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/movieinfo")
+@RequestMapping("/api/omdb") // wichtig: Prefix, damit keine Kollision mit "/"
 public class MovieApiController {
 
-    private final MovieApiService service;
+    private final MovieApiService svc;
 
-    public MovieApiController(MovieApiService service) {
-        this.service = service;
+    public MovieApiController(MovieApiService svc) {
+        this.svc = svc;
     }
 
+    // GET /api/omdb?t=Star%20Wars&type=movie  ODER  /api/omdb?i=tt0076759
     @GetMapping
-    public ResponseEntity<String> byTitle(@RequestParam String title) {
-        try {
-            return ResponseEntity.ok(service.fetchByTitle(title));
-        } catch (MovieApiService.MissingApiKeyException ex) {
-            return ResponseEntity.status(500).body("""
-        {"Response":"False","Error":"Server misconfigured: OMDb API key missing"}""");
+    public ResponseEntity<?> get(@RequestParam(required = false, name = "t") String title,
+                                 @RequestParam(required = false, name = "i") String imdbId,
+                                 @RequestParam(required = false, name = "type") String type) {
+        if (imdbId != null && !imdbId.isBlank()) {
+            var m = svc.fetchById(imdbId);
+            return (m != null && "True".equalsIgnoreCase(m.getResponse()))
+                    ? ResponseEntity.ok(m) : ResponseEntity.notFound().build();
         }
+        if (title != null && !title.isBlank()) {
+            var m = svc.fetchByTitle(title, type);
+            return (m != null && m.getTitle() != null)
+                    ? ResponseEntity.ok(m) : ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.badRequest().body("Use ?t=TITLE or ?i=IMDBID");
+    }
+
+    // GET /api/omdb/search?q=Star%20Wars&type=movie
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam("q") String q,
+                                    @RequestParam(required = false, name = "type") String type) {
+        var res = svc.search(q, type);
+        return ResponseEntity.ok(res);
     }
 }

@@ -1,23 +1,35 @@
 package htw.webtech.todo.app.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Film {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
-    private Integer minute;     // Zwischenstand
-    private String notes;       // Eigene Notizen (Bearbeiter)
+    private Integer minutes;
 
-    public Film() {}
-    public Film(Long id, String title, Integer minute, String notes) {
-        this.id = id; this.title = title; this.minute = minute; this.notes = notes;
-    }
+    @Column(length = 4000)
+    private String notes;
 
+    // optional: hinterlegte Zuordnung zu OMDb
+    @Column(name = "imdb_id")
+    private String imdbId;
+
+    // getters/setters
     public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public Integer getMinute() { return minute; }
-    public String getNotes() { return notes; }
-
     public void setId(Long id) { this.id = id; }
+
+    public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
-    public void setMinute(Integer minute) { this.minute = minute; }
+
+    public Integer getMinutes() { return minutes; }
+    public void setMinutes(Integer minutes) { this.minutes = minutes; }
+
+    public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public String getImdbId() { return imdbId; }
+    public void setImdbId(String imdbId) { this.imdbId = imdbId; }
 }

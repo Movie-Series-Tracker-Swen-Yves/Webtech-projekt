@@ -1,46 +1,49 @@
 package htw.webtech.todo.app.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import htw.webtech.todo.app.dto.OmdbMovie;
+import htw.webtech.todo.app.dto.OmdbSearchResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 @Service
 public class MovieApiService {
 
-    private final RestClient client = RestClient.create();
+    private static final String API_KEY = "d89dd9a2";
+    private final RestClient http = RestClient.create("https://www.omdbapi.com");
 
-    // lädt aus application.properties oder aus ENV (Render)
-    public MovieApiService(
-            @Value("${omdb.api.key:${OMDB_API_KEY:}}") String apiKey) {
-        this.apiKey = apiKey;
+    public OmdbMovie fetchById(String imdbId) {
+        if (imdbId == null || imdbId.isBlank()) return null;
+        return http.get()
+                .uri(uri -> uri.queryParam("apikey", API_KEY)
+                        .queryParam("i", imdbId)
+                        .build())
+                .retrieve()
+                .body(OmdbMovie.class);
     }
 
-    private final String apiKey;
-
-    public String fetchByTitle(String title) {
-        if (apiKey == null || apiKey.isBlank()) {
-            // Eigene, klare Fehlermeldung statt Whitelabel
-            throw new MissingApiKeyException("OMDb API-Key fehlt. Setze 'omdb.api.key' oder ENV 'OMDB_API_KEY'.");
-        }
-        String url = "https://www.omdbapi.com/?t=" + title.replace(" ", "+")
-                + "&apikey=" + apiKey + "&plot=full";
-
-        try {
-            return client.get().uri(url).retrieve().body(String.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                // Typischer Fall: falscher/fehlender Key → kurze Antwort für Frontend
-                return """
-          {"Response":"False","Error":"Unauthorized (API key invalid or missing)"}""";
+    public OmdbMovie fetchByTitle(String title, String type) {
+        if (title == null || title.isBlank()) return null;
+        var req = http.get().uri(uri -> {
+            var b = uri.queryParam("apikey", API_KEY)
+                    .queryParam("t", title);
+            if (type != null && !type.isBlank()) {
+                b.queryParam("type", type);
             }
-            throw e; // andere Fehler weiterwerfen → globaler Handler fängt das
-        }
+            return b.build();
+        });
+        return req.retrieve().body(OmdbMovie.class);
     }
 
-    // kleine eigene Runtime-Exception
-    public static class MissingApiKeyException extends RuntimeException {
-        public MissingApiKeyException(String msg) { super(msg); }
+    public OmdbSearchResponse search(String q, String type) {
+        if (q == null || q.isBlank()) return null;
+        return http.get()
+                .uri(uri -> {
+                    var b = uri.queryParam("apikey", API_KEY)
+                            .queryParam("s", q);
+                    if (type != null && !type.isBlank()) b.queryParam("type", type);
+                    return b.build();
+                })
+                .retrieve()
+                .body(OmdbSearchResponse.class);
     }
 }

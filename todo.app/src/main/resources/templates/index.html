@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Übersicht</title>
+    <style>
+        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 32px; }
+        h1 { margin-bottom: 24px; }
+        h2 { margin: 32px 0 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #e5e7eb; padding: 8px 10px; }
+        th { background: #f3f4f6; text-align: left; }
+        .actions a, .actions button { font-size: 0.95rem; }
+        .form-row { margin: 8px 0; }
+        input[type="text"], input[type="number"] { width: 100%; box-sizing: border-box; padding: 6px 8px; }
+        button { padding: 6px 10px; cursor: pointer; }
+        .muted { color: #6b7280; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<h1>Übersicht</h1>
+
+<!-- =======================
+     FILME
+     ======================= -->
+<h2>Filme</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Titel</th>
+        <th>Minuten</th>
+        <th>Notizen</th>
+        <th>Aktionen</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Keine Filme -->
+    <tr th:if="${#lists.isEmpty(filme)}">
+        <td class="muted" colspan="4">Keine Filme.</td>
+    </tr>
+
+    <!-- Filme auflisten -->
+    <tr th:each="f : ${filme}">
+        <td th:text="${f.title}">Titel</td>
+        <td th:text="${f.minutes}">0</td>
+        <td th:text="${f.notes}">–</td>
+        <td class="actions">
+            <a th:href="@{|/film/${f.id}|}">Details</a>
+        </td>
+    </tr>
+
+    <!-- Formular: neuen Film anlegen (x-www-form-urlencoded) -->
+    <tr>
+        <td colspan="4">
+            <form th:action="@{/film}" method="post">
+                <div class="form-row">
+                    <input type="text"   name="title"   placeholder="Titel"    required />
+                </div>
+                <div class="form-row">
+                    <input type="number" name="minutes" placeholder="Minuten"  min="0"/>
+                </div>
+                <div class="form-row">
+                    <input type="text"   name="notes"   placeholder="Notizen"/>
+                </div>
+                <button type="submit">Speichern</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- =======================
+     SERIEN
+     ======================= -->
+<h2>Serien</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Titel</th>
+        <th>Staffel</th>
+        <th>Episode</th>
+        <th>Minuten</th>
+        <th>Notizen</th>
+        <th>Aktionen</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Keine Serien -->
+    <tr th:if="${#lists.isEmpty(serien)}">
+        <td class="muted" colspan="6">Keine Serien.</td>
+    </tr>
+
+    <!-- Serien auflisten -->
+    <tr th:each="s : ${serien}">
+        <td th:text="${s.title}">Titel</td>
+        <td th:text="${s.season}">–</td>
+        <td th:text="${s.episode}">–</td>
+        <td th:text="${s.minutes}">0</td>
+        <td th:text="${s.notes}">–</td>
+        <td class="actions">
+            <a th:href="@{|/serie/${s.id}|}">Details</a>
+        </td>
+    </tr>
+
+    <!-- Formular: neue Serie anlegen -->
+    <tr>
+        <td colspan="6">
+            <form th:action="@{/serie}" method="post">
+                <div class="form-row">
+                    <input type="text"   name="title"   placeholder="Titel"    required />
+                </div>
+                <div class="form-row">
+                    <input type="number" name="season"  placeholder="Staffel"  min="0"/>
+                </div>
+                <div class="form-row">
+                    <input type="number" name="episode" placeholder="Episode"  min="0"/>
+                </div>
+                <div class="form-row">
+                    <input type="number" name="minutes" placeholder="Minuten"  min="0"/>
+                </div>
+                <div class="form-row">
+                    <input type="text"   name="notes"   placeholder="Notizen"/>
+                </div>
+                <button type="submit">Speichern</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
