@@ -1,7 +1,8 @@
 # Webtech-projekt README
 # Swen Sucker und Leon
 
-# Das Projekt speichert den Film und Serien Fortschritt. Wenn man auf Details drückt, wird die Datenbank OMDB verbunden und generiert eine passende Beschreibung und Informationen.
+# Das Projekt speichert den Film und Serien Fortschritt. 
+# Wenn man auf Details drückt, wird die Datenbank OMDB verbunden und generiert eine passende Beschreibung und Informationen.
 
 # TO DO LIST (Eigene)
 
