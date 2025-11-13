@@ -1,17 +1,22 @@
 package htw.webtech.todo.app.dto;
 
-public class CreateFilmDto {
+public class FilmDto {
+    private Long id;
     private String title;
-    private Integer minutes; // plural im DTO
+    private Integer minutes; // plural in der API-Antwort
     private String notes;
 
-    public CreateFilmDto() { }
+    public FilmDto() { }
 
-    public CreateFilmDto(String title, Integer minutes, String notes) {
+    public FilmDto(Long id, String title, Integer minutes, String notes) {
+        this.id = id;
         this.title = title;
         this.minutes = minutes;
         this.notes = notes;
     }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

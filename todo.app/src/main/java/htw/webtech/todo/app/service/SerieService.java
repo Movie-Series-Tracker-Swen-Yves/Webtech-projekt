@@ -1,10 +1,10 @@
 package htw.webtech.todo.app.service;
 
 import htw.webtech.todo.app.dto.CreateSerieDto;
+import htw.webtech.todo.app.dto.SerieDto;
 import htw.webtech.todo.app.model.Serie;
 import htw.webtech.todo.app.repository.SerieRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,50 +12,45 @@ import java.util.List;
 public class SerieService {
     private final SerieRepository repo;
 
-    public SerieService(SerieRepository repo) {
-        this.repo = repo;
+    public SerieService(SerieRepository repo) { this.repo = repo; }
+
+    public List<SerieDto> findAll() {
+        return repo.findAll().stream().map(this::toDto).toList();
     }
 
-    public List<Serie> findAll() {
-        return repo.findAll();
-    }
-
-    public Serie findById(Long id) {
-        return repo.findById(id).orElseThrow();
-    }
-
-    @Transactional
-    public Serie create(CreateSerieDto dto) {
-        var s = new Serie();
+    public SerieDto create(CreateSerieDto dto) {
+        Serie s = new Serie();
         s.setTitle(dto.getTitle());
         s.setSeason(dto.getSeason());
         s.setEpisode(dto.getEpisode());
-        s.setMinutes(dto.getMinutes());
+        if (dto.getMinutes() != null) s.setMinute(dto.getMinutes());
         s.setNotes(dto.getNotes());
-        return repo.save(s);
+        return toDto(repo.save(s));
     }
 
-    @Transactional
-    public void updatePartial(Long id, Integer season, Integer episode,
-                              Integer minute, String notes, String title) {
-        var s = findById(id);
+    public void updatePartial(Long id, Integer season, Integer episode, Integer minutes, String notes, String title) {
+        Serie s = repo.findById(id).orElseThrow();
         if (season != null)  s.setSeason(season);
         if (episode != null) s.setEpisode(episode);
-        if (minute != null)  s.setMinutes(minute);
+        if (minutes != null) s.setMinute(minutes);
         if (notes != null)   s.setNotes(notes);
         if (title != null)   s.setTitle(title);
         repo.save(s);
     }
 
-    @Transactional
-    public void setImdbId(Long id, String imdbId) {
-        var s = findById(id);
-        s.setImdbId(imdbId);
-        repo.save(s);
+    public void delete(Long id) {
+        if (!repo.existsById(id)) throw new IllegalArgumentException("Serie " + id + " not found");
+        repo.deleteById(id);
     }
 
-    @Transactional
-    public void delete(Long id) {
-        repo.deleteById(id);
+    private SerieDto toDto(Serie s) {
+        return new SerieDto(
+                s.getId(),
+                s.getTitle(),
+                s.getSeason(),
+                s.getEpisode(),
+                s.getMinute(), // Entity (singular) -> DTO (plural)
+                s.getNotes()
+        );
     }
 }

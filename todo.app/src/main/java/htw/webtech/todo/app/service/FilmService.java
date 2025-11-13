@@ -1,10 +1,10 @@
 package htw.webtech.todo.app.service;
 
 import htw.webtech.todo.app.dto.CreateFilmDto;
+import htw.webtech.todo.app.dto.FilmDto;
 import htw.webtech.todo.app.model.Film;
 import htw.webtech.todo.app.repository.FilmRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,45 +12,39 @@ import java.util.List;
 public class FilmService {
     private final FilmRepository repo;
 
-    public FilmService(FilmRepository repo) {
-        this.repo = repo;
+    public FilmService(FilmRepository repo) { this.repo = repo; }
+
+    public List<FilmDto> findAll() {
+        return repo.findAll().stream().map(this::toDto).toList();
     }
 
-    public List<Film> findAll() {
-        return repo.findAll();
-    }
-
-    public Film findById(Long id) {
-        return repo.findById(id).orElseThrow();
-    }
-
-    @Transactional
-    public Film create(CreateFilmDto dto) {
-        var f = new Film();
+    public FilmDto create(CreateFilmDto dto) {
+        Film f = new Film();
         f.setTitle(dto.getTitle());
-        f.setMinutes(dto.getMinutes());
+        if (dto.getMinutes() != null) f.setMinute(dto.getMinutes());
         f.setNotes(dto.getNotes());
-        return repo.save(f);
+        return toDto(repo.save(f));
     }
 
-    @Transactional
-    public void updatePartial(Long id, Integer minute, String notes, String title) {
-        var f = findById(id);
-        if (minute != null) f.setMinutes(minute);
-        if (notes != null)  f.setNotes(notes);
-        if (title != null)  f.setTitle(title);
+    public void updatePartial(Long id, Integer minutes, String notes, String title) {
+        Film f = repo.findById(id).orElseThrow();
+        if (minutes != null) f.setMinute(minutes);
+        if (notes != null)   f.setNotes(notes);
+        if (title != null)   f.setTitle(title);
         repo.save(f);
     }
 
-    @Transactional
-    public void setImdbId(Long id, String imdbId) {
-        var f = findById(id);
-        f.setImdbId(imdbId);
-        repo.save(f);
-    }
-
-    @Transactional
     public void delete(Long id) {
+        if (!repo.existsById(id)) throw new IllegalArgumentException("Film " + id + " not found");
         repo.deleteById(id);
+    }
+
+    private FilmDto toDto(Film f) {
+        return new FilmDto(
+                f.getId(),
+                f.getTitle(),
+                f.getMinute(), // Entity (singular) -> DTO (plural)
+                f.getNotes()
+        );
     }
 }

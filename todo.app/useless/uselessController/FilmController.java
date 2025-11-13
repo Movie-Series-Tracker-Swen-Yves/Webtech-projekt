@@ -1,4 +1,4 @@
-package htw.webtech.todo.app.controller;
+package htw.webtech.todo.app.uselessController;
 
 import htw.webtech.todo.app.dto.CreateFilmDto;
 import htw.webtech.todo.app.service.FilmService;

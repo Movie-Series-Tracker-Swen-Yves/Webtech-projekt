@@ -1,21 +1,26 @@
 package htw.webtech.todo.app.dto;
 
-public class CreateSerieDto {
+public class SerieDto {
+    private Long id;
     private String title;
     private Integer season;
     private Integer episode;
     private Integer minutes; // plural
     private String notes;
 
-    public CreateSerieDto() { }
+    public SerieDto() { }
 
-    public CreateSerieDto(String title, Integer season, Integer episode, Integer minutes, String notes) {
+    public SerieDto(Long id, String title, Integer season, Integer episode, Integer minutes, String notes) {
+        this.id = id;
         this.title = title;
         this.season = season;
         this.episode = episode;
         this.minutes = minutes;
         this.notes = notes;
     }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
