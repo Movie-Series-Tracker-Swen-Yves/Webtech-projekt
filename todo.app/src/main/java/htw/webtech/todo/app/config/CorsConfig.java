@@ -6,10 +6,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
     @Override
-    public void addCorsMappings(CorsRegistry r) {
-        r.addMapping("/api/**")
-                .allowedOrigins("http://localhost:5173")
-                .allowedMethods("GET","POST","PUT","PATCH","DELETE");
+    public void addCorsMappings(CorsRegistry registry) {
+        // Auf Render per Env konfigurierbar, lokal Fallback
+        String frontendOrigin = System.getenv().getOrDefault(
+                "FRONTEND_ORIGIN",
+                "http://localhost:5173"
+        );
+
+        registry.addMapping("/api/**")
+                .allowedOrigins(frontendOrigin)
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS");
     }
 }
