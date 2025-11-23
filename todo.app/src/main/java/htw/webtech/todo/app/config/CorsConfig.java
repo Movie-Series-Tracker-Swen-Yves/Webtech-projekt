@@ -9,14 +9,8 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // Auf Render per Env konfigurierbar, lokal Fallback
-        String frontendOrigin = System.getenv().getOrDefault(
-                "FRONTEND_ORIGIN",
-                "http://localhost:5173"
-        );
-
         registry.addMapping("/api/**")
-                .allowedOrigins(frontendOrigin)
+                .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS");
     }
 }
