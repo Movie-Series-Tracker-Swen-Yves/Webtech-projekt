@@ -64,7 +64,7 @@ public class ApiFilmController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- DELETE /api/films/{id} ---------------------------------------------
+    // --- DELETE /api/films/{id} -------------------------------------------
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
