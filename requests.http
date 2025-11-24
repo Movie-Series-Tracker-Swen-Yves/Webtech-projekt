@@ -1,0 +1,21 @@
+### Film anlegen
+POST http://localhost:8080/api/films
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "minutes": 148,
+  "notes": "Testeintrag aus requests.http"
+}
+
+### Serie anlegen
+POST http://localhost:8080/api/series
+Content-Type: application/json
+
+{
+  "title": "Breaking Bad – S1E1",
+  "season": 1,
+  "episode": 1,
+  "minutes": 58,
+  "notes": "Testserie"
+}
