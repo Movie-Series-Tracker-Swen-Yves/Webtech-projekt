@@ -10,32 +10,60 @@ import java.util.List;
 
 @Service
 public class FilmService {
+
     private final FilmRepository repo;
 
-    public FilmService(FilmRepository repo) { this.repo = repo; }
+    public FilmService(FilmRepository repo) {
+        this.repo = repo;
+    }
 
     public List<FilmDto> findAll() {
-        return repo.findAll().stream().map(this::toDto).toList();
+        return repo.findAll()
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    public FilmDto findById(Long id) {
+        return repo.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("Film " + id + " not found"));
     }
 
     public FilmDto create(CreateFilmDto dto) {
-        Film f = new Film();
-        f.setTitle(dto.getTitle());
-        if (dto.getMinutes() != null) f.setMinute(dto.getMinutes());
-        f.setNotes(dto.getNotes());
-        return toDto(repo.save(f));
+        Film entity = new Film();
+        entity.setTitle(dto.getTitle());
+        entity.setMinute(dto.getMinutes()); // DTO plural -> Entity singular
+        entity.setNotes(dto.getNotes());
+
+        Film saved = repo.save(entity);
+        return toDto(saved);
     }
 
+    /**
+     * Teil-Update: nur Felder überschreiben, die nicht null sind.
+     */
     public void updatePartial(Long id, Integer minutes, String notes, String title) {
-        Film f = repo.findById(id).orElseThrow();
-        if (minutes != null) f.setMinute(minutes);
-        if (notes != null)   f.setNotes(notes);
-        if (title != null)   f.setTitle(title);
-        repo.save(f);
+        Film entity = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Film " + id + " not found"));
+
+        if (minutes != null) {
+            entity.setMinute(minutes);
+        }
+        if (notes != null) {
+            entity.setNotes(notes);
+        }
+        if (title != null) {
+            entity.setTitle(title);
+        }
+
+        repo.save(entity);
     }
 
     public void delete(Long id) {
-        if (!repo.existsById(id)) throw new IllegalArgumentException("Film " + id + " not found");
+        if (!repo.existsById(id)) {
+            throw new IllegalArgumentException("Film " + id + " not found");
+        }
         repo.deleteById(id);
     }
 

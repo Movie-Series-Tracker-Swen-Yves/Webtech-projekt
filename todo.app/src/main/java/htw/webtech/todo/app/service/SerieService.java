@@ -10,36 +10,61 @@ import java.util.List;
 
 @Service
 public class SerieService {
+
     private final SerieRepository repo;
 
-    public SerieService(SerieRepository repo) { this.repo = repo; }
+    public SerieService(SerieRepository repo) {
+        this.repo = repo;
+    }
 
     public List<SerieDto> findAll() {
-        return repo.findAll().stream().map(this::toDto).toList();
+        return repo.findAll()
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    public SerieDto findById(Long id) {
+        return repo.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("Serie " + id + " not found"));
     }
 
     public SerieDto create(CreateSerieDto dto) {
-        Serie s = new Serie();
-        s.setTitle(dto.getTitle());
-        s.setSeason(dto.getSeason());
-        s.setEpisode(dto.getEpisode());
-        if (dto.getMinutes() != null) s.setMinute(dto.getMinutes());
-        s.setNotes(dto.getNotes());
-        return toDto(repo.save(s));
+        Serie entity = new Serie();
+        entity.setTitle(dto.getTitle());
+        entity.setSeason(dto.getSeason());
+        entity.setEpisode(dto.getEpisode());
+        entity.setMinute(dto.getMinutes());
+        entity.setNotes(dto.getNotes());
+
+        Serie saved = repo.save(entity);
+        return toDto(saved);
     }
 
-    public void updatePartial(Long id, Integer season, Integer episode, Integer minutes, String notes, String title) {
-        Serie s = repo.findById(id).orElseThrow();
-        if (season != null)  s.setSeason(season);
-        if (episode != null) s.setEpisode(episode);
-        if (minutes != null) s.setMinute(minutes);
-        if (notes != null)   s.setNotes(notes);
-        if (title != null)   s.setTitle(title);
-        repo.save(s);
+    public void updatePartial(Long id,
+                              Integer season,
+                              Integer episode,
+                              Integer minutes,
+                              String notes,
+                              String title) {
+
+        Serie entity = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Serie " + id + " not found"));
+
+        if (season != null) entity.setSeason(season);
+        if (episode != null) entity.setEpisode(episode);
+        if (minutes != null) entity.setMinute(minutes);
+        if (notes != null) entity.setNotes(notes);
+        if (title != null) entity.setTitle(title);
+
+        repo.save(entity);
     }
 
     public void delete(Long id) {
-        if (!repo.existsById(id)) throw new IllegalArgumentException("Serie " + id + " not found");
+        if (!repo.existsById(id)) {
+            throw new IllegalArgumentException("Serie " + id + " not found");
+        }
         repo.deleteById(id);
     }
 
@@ -49,7 +74,7 @@ public class SerieService {
                 s.getTitle(),
                 s.getSeason(),
                 s.getEpisode(),
-                s.getMinute(), // Entity (singular) -> DTO (plural)
+                s.getMinute(), // Entity singular -> DTO plural
                 s.getNotes()
         );
     }

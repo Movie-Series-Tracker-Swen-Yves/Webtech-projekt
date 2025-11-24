@@ -7,25 +7,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/series")
 public class ApiSerieController {
+
     private final SerieService service;
 
-    public ApiSerieController(SerieService service) { this.service = service; }
+    public ApiSerieController(SerieService service) {
+        this.service = service;
+    }
 
-    @GetMapping public List<SerieDto> list() { return service.findAll(); }
+    @GetMapping
+    public ResponseEntity<List<SerieDto>> list() {
+        try {
+            return ResponseEntity.ok(service.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+    }
 
-    @PostMapping(consumes = "application/json")
+    @GetMapping("/{id}")
+    public ResponseEntity<SerieDto> get(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(service.findById(id));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping
     public ResponseEntity<SerieDto> create(@RequestBody CreateSerieDto dto) {
-        var created = service.create(dto);
-        return ResponseEntity.created(URI.create("/api/series/" + created.getId())).body(created);
+        SerieDto created = service.create(dto);
+        return ResponseEntity
+                .created(URI.create("/api/series/" + created.getId()))
+                .body(created);
     }
 
     @PatchMapping(path = "/{id}", consumes = "application/json")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody CreateSerieDto partial) {
+    public ResponseEntity<Void> update(@PathVariable Long id,
+                                       @RequestBody CreateSerieDto partial) {
         service.updatePartial(
                 id,
                 partial.getSeason(),
