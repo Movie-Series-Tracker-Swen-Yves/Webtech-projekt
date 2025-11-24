@@ -20,15 +20,19 @@ public class ApiSerieController {
         this.service = service;
     }
 
+    // --- GET /api/series -----------------------------------------------------
     @GetMapping
     public ResponseEntity<List<SerieDto>> list() {
         try {
-            return ResponseEntity.ok(service.findAll());
+            List<SerieDto> all = service.findAll();
+            return ResponseEntity.ok(all);
         } catch (Exception e) {
+            // Safety-Net: lieber [] als 500 zurückgeben
             return ResponseEntity.ok(Collections.emptyList());
         }
     }
 
+    // --- GET /api/series/{id} ------------------------------------------------
     @GetMapping("/{id}")
     public ResponseEntity<SerieDto> get(@PathVariable Long id) {
         try {
@@ -38,6 +42,8 @@ public class ApiSerieController {
         }
     }
 
+    // --- POST /api/series ----------------------------------------------------
+    // (für M4 optional, aber sauber der Film-Logik angepasst)
     @PostMapping
     public ResponseEntity<SerieDto> create(@RequestBody CreateSerieDto dto) {
         SerieDto created = service.create(dto);
@@ -46,9 +52,11 @@ public class ApiSerieController {
                 .body(created);
     }
 
+    // --- PATCH /api/series/{id} ---------------------------------------------
     @PatchMapping(path = "/{id}", consumes = "application/json")
     public ResponseEntity<Void> update(@PathVariable Long id,
                                        @RequestBody CreateSerieDto partial) {
+
         service.updatePartial(
                 id,
                 partial.getSeason(),
@@ -60,6 +68,7 @@ public class ApiSerieController {
         return ResponseEntity.noContent().build();
     }
 
+    // --- DELETE /api/series/{id} --------------------------------------------
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);

@@ -43,6 +43,7 @@ public class ApiFilmController {
     }
 
     // --- POST /api/films -----------------------------------------------------
+    // M4-relevant: REST-POST, der FilmService.create(...) aufruft und in die DB schreibt.
     @PostMapping
     public ResponseEntity<FilmDto> create(@RequestBody CreateFilmDto dto) {
         FilmDto created = service.create(dto);
@@ -64,7 +65,7 @@ public class ApiFilmController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- DELETE /api/films/{id} -------------------------------------------
+    // --- DELETE /api/films/{id} ---------------------------------------------
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);

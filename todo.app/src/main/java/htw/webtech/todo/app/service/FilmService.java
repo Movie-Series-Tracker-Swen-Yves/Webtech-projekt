@@ -30,13 +30,17 @@ public class FilmService {
                 .orElseThrow(() -> new IllegalArgumentException("Film " + id + " not found"));
     }
 
+    /**
+     * Neues Film-Objekt in der Datenbank anlegen (M4-relevant, nutzt repo.save(...)).
+     */
     public FilmDto create(CreateFilmDto dto) {
         Film entity = new Film();
         entity.setTitle(dto.getTitle());
-        entity.setMinute(dto.getMinutes()); // DTO plural -> Entity singular
+        // DTO: minutes (plural) -> Entity: minute (singular)
+        entity.setMinute(dto.getMinutes());
         entity.setNotes(dto.getNotes());
 
-        Film saved = repo.save(entity);
+        Film saved = repo.save(entity);   // -> schreibt in die Postgres-DB
         return toDto(saved);
     }
 
@@ -71,7 +75,7 @@ public class FilmService {
         return new FilmDto(
                 f.getId(),
                 f.getTitle(),
-                f.getMinute(), // Entity (singular) -> DTO (plural)
+                f.getMinute(), // Entity: minute -> DTO: minutes
                 f.getNotes()
         );
     }

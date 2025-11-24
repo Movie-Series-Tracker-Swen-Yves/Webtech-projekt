@@ -30,6 +30,9 @@ public class SerieService {
                 .orElseThrow(() -> new IllegalArgumentException("Serie " + id + " not found"));
     }
 
+    /**
+     * Neue Serie in der Datenbank anlegen (M4-relevant, nutzt repo.save(...)).
+     */
     public SerieDto create(CreateSerieDto dto) {
         Serie entity = new Serie();
         entity.setTitle(dto.getTitle());
@@ -38,7 +41,7 @@ public class SerieService {
         entity.setMinute(dto.getMinutes());
         entity.setNotes(dto.getNotes());
 
-        Serie saved = repo.save(entity);
+        Serie saved = repo.save(entity);  // -> schreibt in die Postgres-DB
         return toDto(saved);
     }
 
@@ -74,7 +77,7 @@ public class SerieService {
                 s.getTitle(),
                 s.getSeason(),
                 s.getEpisode(),
-                s.getMinute(), // Entity singular -> DTO plural
+                s.getMinute(), // Entity: minute -> DTO: minutes
                 s.getNotes()
         );
     }
