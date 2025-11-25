@@ -17,5 +17,27 @@ Content-Type: application/json
   "season": 1,
   "episode": 1,
   "minutes": 58,
-  "notes": "Testserie"
+  "notes": " Swen kann meine Eier lecken"
 }
+
+### Film anlegen auf Render
+POST https://webtech-projekt-d919.onrender.com/api/films
+Content-Type: application/json
+
+{
+  "title": "Blade Runner",
+  "minutes": 117,
+  "notes": " bro scammt mich"
+}
+
+### Serie anlegen
+POST https://webtech-projekt-d919.onrender.com/api/series
+Content-Type: application/json
+
+{
+  "title": "Breaking Bad – S1E1",
+  "season": 1,
+  "episode": 1,
+  "minutes": 58,
+  "notes": " Swen kann meine Eier lecken"
+  }
