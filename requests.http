@@ -1,24 +1,5 @@
-### Film anlegen
-POST http://localhost:8080/api/films
-Content-Type: application/json
 
-{
-  "title": "Inception",
-  "minutes": 148,
-  "notes": "Testeintrag aus requests.http"
-}
 
-### Serie anlegen
-POST http://localhost:8080/api/series
-Content-Type: application/json
-
-{
-  "title": "Breaking Bad – S1E1",
-  "season": 1,
-  "episode": 1,
-  "minutes": 58,
-  "notes": " Swen kann meine Eier lecken"
-}
 
 ### Film anlegen auf Render
 POST https://webtech-projekt-d919.onrender.com/api/films
@@ -39,5 +20,19 @@ Content-Type: application/json
   "season": 1,
   "episode": 1,
   "minutes": 58,
-  "notes": " Swen kann meine Eier lecken"
+  "notes": " Swen kann meine ganz fett Eier lecken"
   }
+
+### Serie anlegen
+POST https://webtech-projekt-d919.onrender.com/api/series
+Content-Type: application/json
+
+{
+  "title": "Swen leckt Leons Eier",
+  "season": 1,
+  "episode": 1,
+  "minutes": 2,
+  "notes": " Swen versucht einen ganzen bbc"
+}
+
+

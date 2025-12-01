@@ -27,7 +27,6 @@ public class ApiFilmController {
             List<FilmDto> all = service.findAll();
             return ResponseEntity.ok(all);
         } catch (Exception e) {
-            // Safety-Net: lieber [] zurückgeben als 500, damit dein Frontend nicht stirbt
             return ResponseEntity.ok(Collections.emptyList());
         }
     }
@@ -43,7 +42,7 @@ public class ApiFilmController {
     }
 
     // --- POST /api/films -----------------------------------------------------
-    // M4-relevant: REST-POST, der FilmService.create(...) aufruft und in die DB schreibt.
+    // REST-POST, der FilmService.create(...) aufruft und in die DB schreibt.
     @PostMapping
     public ResponseEntity<FilmDto> create(@RequestBody CreateFilmDto dto) {
         FilmDto created = service.create(dto);

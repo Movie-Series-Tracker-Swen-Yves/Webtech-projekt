@@ -27,7 +27,7 @@ public class ApiSerieController {
             List<SerieDto> all = service.findAll();
             return ResponseEntity.ok(all);
         } catch (Exception e) {
-            // Safety-Net: lieber [] als 500 zurückgeben
+
             return ResponseEntity.ok(Collections.emptyList());
         }
     }
@@ -43,7 +43,6 @@ public class ApiSerieController {
     }
 
     // --- POST /api/series ----------------------------------------------------
-    // (für M4 optional, aber sauber der Film-Logik angepasst)
     @PostMapping
     public ResponseEntity<SerieDto> create(@RequestBody CreateSerieDto dto) {
         SerieDto created = service.create(dto);

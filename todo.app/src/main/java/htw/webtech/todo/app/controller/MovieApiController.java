@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/omdb") // wichtig: Prefix, damit keine Kollision mit "/"
+@RequestMapping("/api/omdb")
 public class MovieApiController {
 
     private final MovieApiService svc;

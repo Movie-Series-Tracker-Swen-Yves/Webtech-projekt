@@ -27,7 +27,7 @@ dependencies {
     //runtimeOnly 'com.h2database:h2' --> M3
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mockito:mockito-inline:5.2.0' // optional
+	testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
 
 test {

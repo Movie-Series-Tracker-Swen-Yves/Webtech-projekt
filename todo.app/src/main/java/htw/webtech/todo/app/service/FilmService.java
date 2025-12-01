@@ -30,13 +30,10 @@ public class FilmService {
                 .orElseThrow(() -> new IllegalArgumentException("Film " + id + " not found"));
     }
 
-    /**
-     * Neues Film-Objekt in der Datenbank anlegen (M4-relevant, nutzt repo.save(...)).
-     */
+
     public FilmDto create(CreateFilmDto dto) {
         Film entity = new Film();
         entity.setTitle(dto.getTitle());
-        // DTO: minutes (plural) -> Entity: minute (singular)
         entity.setMinute(dto.getMinutes());
         entity.setNotes(dto.getNotes());
 
